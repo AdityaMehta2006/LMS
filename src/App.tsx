@@ -14,23 +14,23 @@ export default function App() {
   const [currentRole, setCurrentRole] = useState<'teacher' | 'editor' | 'admin'>('teacher');
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Role Switcher - Floating for demo purposes */}
-      <div className="fixed top-4 right-4 z-50">
-        <Card className="shadow-lg">
-          <CardContent className="p-2">
+      <div className="fixed top-6 right-6 z-50">
+        <Card className="shadow-2xl border-border/50 backdrop-blur-sm bg-white/95">
+          <CardContent className="p-3">
             <Tabs value={currentRole} onValueChange={(value) => setCurrentRole(value as 'teacher' | 'editor' | 'admin')}>
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="teacher" className="text-xs px-3">
-                  <Users className="w-3 h-3 mr-1" />
+              <TabsList className="grid w-full grid-cols-3 h-11 bg-muted/50">
+                <TabsTrigger value="teacher" className="text-xs px-4 data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                  <Users className="w-4 h-4 mr-1.5" />
                   Teacher
                 </TabsTrigger>
-                <TabsTrigger value="editor" className="text-xs px-3">
-                  <Edit3 className="w-3 h-3 mr-1" />
+                <TabsTrigger value="editor" className="text-xs px-4 data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                  <Edit3 className="w-4 h-4 mr-1.5" />
                   Editor
                 </TabsTrigger>
-                <TabsTrigger value="admin" className="text-xs px-3">
-                  <Settings className="w-3 h-3 mr-1" />
+                <TabsTrigger value="admin" className="text-xs px-4 data-[state=active]:bg-white data-[state=active]:shadow-sm">
+                  <Settings className="w-4 h-4 mr-1.5" />
                   Admin
                 </TabsTrigger>
               </TabsList>

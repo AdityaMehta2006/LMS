@@ -4,9 +4,6 @@ import { TeacherLayout } from "./TeacherLayout";
 import { TeacherDashboardHome } from "./TeacherDashboardHome";
 import { TeacherCoursesPage } from "./TeacherCoursesPage";
 import { TeacherCourseDetail } from "./TeacherCourseDetail";
-import { DegreesPage } from "./DegreesPage";
-import { DegreeDetailPage } from "./DegreeDetailPage";
-import { mockDegrees } from "../lib/mockData";
 import { AddCourseDialog } from "./AddCourseDialog";
 import { AddUnitDialog } from "./AddUnitDialog";
 import { AddTopicDialog } from "./AddTopicDialog";
@@ -25,7 +22,6 @@ interface TeacherDashboardProps {
 export function TeacherDashboard({ courses, onUpdateCourses }: TeacherDashboardProps) {
   const [currentPage, setCurrentPage] = useState<string>('dashboard');
   const [selectedCourseId, setSelectedCourseId] = useState<string | null>(null);
-  const [selectedDegreeId, setSelectedDegreeId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDepartment, setSelectedDepartment] = useState<string>('all');
   const [selectedProgram, setSelectedProgram] = useState<string>('all');
@@ -39,7 +35,6 @@ export function TeacherDashboard({ courses, onUpdateCourses }: TeacherDashboardP
   const [teacherNotes, setTeacherNotes] = useState('');
 
   const selectedCourse = selectedCourseId ? courses.find(c => c.id === selectedCourseId) : null;
-  const selectedDegree = selectedDegreeId ? mockDegrees.find(d => d.id === selectedDegreeId) : null;
 
   // Handle navigation
   const handleNavigate = (page: string) => {
@@ -47,23 +42,11 @@ export function TeacherDashboard({ courses, onUpdateCourses }: TeacherDashboardP
     if (page !== 'course-detail') {
       setSelectedCourseId(null);
     }
-    if (page !== 'degree-detail') {
-      setSelectedDegreeId(null);
-    }
   };
 
   const handleViewCourse = (courseId: string) => {
     setSelectedCourseId(courseId);
     setCurrentPage('course-detail');
-  };
-
-  const handleViewDegree = (degreeId: string) => {
-    setSelectedDegreeId(degreeId);
-  };
-
-  const handleViewCourseFromDegree = (courseId: string) => {
-    setSelectedCourseId(courseId);
-    setSelectedDegreeId(null);
   };
 
   // Course management
@@ -184,7 +167,37 @@ export function TeacherDashboard({ courses, onUpdateCourses }: TeacherDashboardP
 
   // Review management
   const handleOpenReview = (courseId: string, unitId: string, topicId: string, topic: Topic) => {
-    setReviewTopic({ courseId, unitId, topicId, topic });
+    // Immediately update status to under_review when opening the review dialog
+    if (topic.status === 'uploaded') {
+      const updatedCourses = courses.map(course => {
+        if (course.id === courseId) {
+          const updatedUnits = course.units.map(unit => {
+            if (unit.id === unitId) {
+              const updatedTopics = unit.topics.map(t => {
+                if (t.id === topicId) {
+                  return {
+                    ...t,
+                    status: 'under_review' as ContentStatus,
+                  };
+                }
+                return t;
+              });
+              return { ...unit, topics: updatedTopics };
+            }
+            return unit;
+          });
+          return { ...course, units: updatedUnits };
+        }
+        return course;
+      });
+      onUpdateCourses(updatedCourses);
+      
+      // Update the topic in the review state to reflect the new status
+      const updatedTopic = { ...topic, status: 'under_review' as ContentStatus };
+      setReviewTopic({ courseId, unitId, topicId, topic: updatedTopic });
+    } else {
+      setReviewTopic({ courseId, unitId, topicId, topic });
+    }
     setTeacherNotes('');
   };
 
@@ -275,44 +288,7 @@ export function TeacherDashboard({ courses, onUpdateCourses }: TeacherDashboardP
       {currentPage === 'course-detail' && selectedCourse && (
         <TeacherCourseDetail
           course={selectedCourse}
-          onBack={() => {
-            if (selectedDegreeId) {
-              setSelectedCourseId(null);
-            } else {
-              handleNavigate('courses');
-            }
-          }}
-          onAddUnit={() => setShowAddUnit(selectedCourse.id)}
-          onAddTopic={(unitId) => setShowAddTopic({ courseId: selectedCourse.id, unitId })}
-          onDeleteTopic={(unitId, topicId) => handleDeleteTopic(selectedCourse.id, unitId, topicId)}
-          onStartScripting={(unitId, topicId, topic) => handleOpenScripting(selectedCourse.id, unitId, topicId, topic)}
-          onReviewTopic={(unitId, topicId, topic) => handleOpenReview(selectedCourse.id, unitId, topicId, topic)}
-          onMarkUnderReview={(unitId, topicId) => markAsUnderReview(selectedCourse.id, unitId, topicId)}
-        />
-      )}
-
-      {currentPage === 'degrees' && !selectedDegreeId && !selectedCourseId && (
-        <DegreesPage
-          courses={courses}
-          selectedDepartment={selectedDepartment}
-          onDepartmentChange={setSelectedDepartment}
-          onViewDegree={handleViewDegree}
-        />
-      )}
-
-      {currentPage === 'degrees' && selectedDegreeId && selectedDegree && !selectedCourseId && (
-        <DegreeDetailPage
-          degree={selectedDegree}
-          courses={courses}
-          onBack={() => setSelectedDegreeId(null)}
-          onViewCourse={handleViewCourseFromDegree}
-        />
-      )}
-
-      {currentPage === 'degrees' && selectedCourseId && selectedCourse && (
-        <TeacherCourseDetail
-          course={selectedCourse}
-          onBack={() => setSelectedCourseId(null)}
+          onBack={() => handleNavigate('courses')}
           onAddUnit={() => setShowAddUnit(selectedCourse.id)}
           onAddTopic={(unitId) => setShowAddTopic({ courseId: selectedCourse.id, unitId })}
           onDeleteTopic={(unitId, topicId) => handleDeleteTopic(selectedCourse.id, unitId, topicId)}

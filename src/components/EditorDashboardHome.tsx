@@ -53,15 +53,9 @@ export function EditorDashboardHome({ courses, onNavigate, onStartRecording }: E
 
   return (
     <div className="space-y-8">
-      {/* Header */}
-      <div>
-        <h2>Dashboard Overview</h2>
-        <p className="text-gray-600 mt-1">Track your video production progress</p>
-      </div>
-
       {/* Progress Section */}
-      <Card>
-        <CardHeader>
+      <Card className="border-border/50 shadow-sm hover:shadow-md transition-shadow">
+        <CardHeader className="pb-6">
           <CardTitle>Production Progress</CardTitle>
           <CardDescription>Overview of video recording and publishing status</CardDescription>
         </CardHeader>
@@ -90,20 +84,22 @@ export function EditorDashboardHome({ courses, onNavigate, onStartRecording }: E
       </Card>
 
       {/* Videos to Record Section */}
-      <Card>
-        <CardHeader>
+      <Card className="border-border/50 shadow-sm hover:shadow-md transition-shadow">
+        <CardHeader className="pb-6">
           <div className="flex justify-between items-center">
             <div>
               <CardTitle className="flex items-center gap-2">
-                <Video className="w-5 h-5" />
+                <div className="p-2 bg-purple-100 rounded-lg">
+                  <Video className="w-5 h-5 text-purple-600" />
+                </div>
                 Videos Ready for Recording
               </CardTitle>
-              <CardDescription className="mt-1">
+              <CardDescription className="mt-2">
                 {needsRecording.length} videos with completed scripts
               </CardDescription>
             </div>
             {needsRecording.length > 3 && (
-              <Button variant="outline" size="sm" onClick={() => onNavigate('courses')}>
+              <Button variant="outline" size="sm" onClick={() => onNavigate('courses')} className="hover:bg-purple-50 hover:text-purple-600 hover:border-purple-300">
                 View All
               </Button>
             )}
@@ -111,24 +107,26 @@ export function EditorDashboardHome({ courses, onNavigate, onStartRecording }: E
         </CardHeader>
         <CardContent>
           {needsRecording.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
-              <Video className="w-12 h-12 mx-auto mb-3 opacity-20" />
+            <div className="text-center py-16 text-muted-foreground">
+              <div className="w-20 h-20 mx-auto mb-4 bg-muted rounded-full flex items-center justify-center">
+                <Video className="w-10 h-10 opacity-40" />
+              </div>
               <p>No videos ready for recording</p>
               <p className="text-sm mt-1">All caught up! 🎉</p>
             </div>
           ) : (
             <div className="space-y-3">
               {needsRecording.slice(0, 5).map(({ topic, unitName, courseName, courseId, unitId }) => (
-                <div key={topic.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                <div key={topic.id} className="flex items-center justify-between p-5 bg-gradient-to-r from-purple-50/50 to-transparent border border-border rounded-xl hover:border-purple-300 hover:shadow-sm transition-all group">
                   <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
+                    <div className="flex items-center gap-2 mb-2">
                       <StatusBadge status={topic.status} />
-                      <span className="text-sm text-gray-600">{courseName}</span>
-                      <ChevronRight className="w-4 h-4 text-gray-400" />
-                      <span className="text-sm text-gray-600">{unitName}</span>
+                      <span className="text-sm text-muted-foreground">{courseName}</span>
+                      <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                      <span className="text-sm text-muted-foreground">{unitName}</span>
                     </div>
-                    <h4 className="text-sm">{topic.name}</h4>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <h4 className="text-sm text-foreground group-hover:text-purple-600 transition-colors">{topic.name}</h4>
+                    <p className="text-xs text-muted-foreground mt-1.5">
                       Duration: {topic.estimatedTime} min
                       {topic.editorComments && <span> • Notes available</span>}
                     </p>
@@ -136,6 +134,7 @@ export function EditorDashboardHome({ courses, onNavigate, onStartRecording }: E
                   <Button 
                     size="sm"
                     onClick={() => onStartRecording(courseId, unitId, topic.id)}
+                    className="ml-4 bg-purple-600 hover:bg-purple-700 shadow-sm"
                   >
                     <Video className="w-4 h-4 mr-2" />
                     Start Recording
@@ -148,15 +147,21 @@ export function EditorDashboardHome({ courses, onNavigate, onStartRecording }: E
       </Card>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => onNavigate('courses')}>
-          <CardHeader>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card className="cursor-pointer border-border/50 hover:border-purple-300 hover:shadow-lg transition-all group bg-gradient-to-br from-white to-purple-50/30" onClick={() => onNavigate('courses')}>
+          <CardHeader className="pb-4">
+            <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-3 group-hover:bg-purple-600 transition-colors">
+              <Video className="w-6 h-6 text-purple-600 group-hover:text-white transition-colors" />
+            </div>
             <CardTitle className="text-base">Manage Courses</CardTitle>
             <CardDescription>View and work on course videos</CardDescription>
           </CardHeader>
         </Card>
-        <Card className="cursor-pointer hover:shadow-md transition-shadow">
-          <CardHeader>
+        <Card className="cursor-pointer border-border/50 hover:border-cyan-300 hover:shadow-lg transition-all group bg-gradient-to-br from-white to-cyan-50/30">
+          <CardHeader className="pb-4">
+            <div className="w-12 h-12 bg-cyan-100 rounded-xl flex items-center justify-center mb-3 group-hover:bg-cyan-600 transition-colors">
+              <ChevronRight className="w-6 h-6 text-cyan-600 group-hover:text-white transition-colors" />
+            </div>
             <CardTitle className="text-base">Production Analytics</CardTitle>
             <CardDescription>View detailed progress reports</CardDescription>
           </CardHeader>

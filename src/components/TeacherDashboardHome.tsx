@@ -48,15 +48,9 @@ export function TeacherDashboardHome({ courses, onNavigate, onReviewTopic }: Tea
 
   return (
     <div className="space-y-8">
-      {/* Header */}
-      <div>
-        <h2>Dashboard Overview</h2>
-        <p className="text-gray-600 mt-1">Track your course progress and review submissions</p>
-      </div>
-
       {/* Progress Section */}
-      <Card>
-        <CardHeader>
+      <Card className="border-border/50 shadow-sm hover:shadow-md transition-shadow">
+        <CardHeader className="pb-6">
           <CardTitle>Content Progress</CardTitle>
           <CardDescription>Overview of content creation and review status</CardDescription>
         </CardHeader>
@@ -85,20 +79,22 @@ export function TeacherDashboardHome({ courses, onNavigate, onReviewTopic }: Tea
       </Card>
 
       {/* Videos to Review Section */}
-      <Card>
-        <CardHeader>
+      <Card className="border-border/50 shadow-sm hover:shadow-md transition-shadow">
+        <CardHeader className="pb-6">
           <div className="flex justify-between items-center">
             <div>
               <CardTitle className="flex items-center gap-2">
-                <Eye className="w-5 h-5" />
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <Eye className="w-5 h-5 text-blue-600" />
+                </div>
                 Videos Awaiting Review
               </CardTitle>
-              <CardDescription className="mt-1">
+              <CardDescription className="mt-2">
                 {awaitingReview.length} videos need your attention
               </CardDescription>
             </div>
             {awaitingReview.length > 3 && (
-              <Button variant="outline" size="sm" onClick={() => onNavigate('courses')}>
+              <Button variant="outline" size="sm" onClick={() => onNavigate('courses')} className="hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300">
                 View All
               </Button>
             )}
@@ -106,30 +102,33 @@ export function TeacherDashboardHome({ courses, onNavigate, onReviewTopic }: Tea
         </CardHeader>
         <CardContent>
           {awaitingReview.length === 0 ? (
-            <div className="text-center py-12 text-gray-500">
-              <Eye className="w-12 h-12 mx-auto mb-3 opacity-20" />
+            <div className="text-center py-16 text-muted-foreground">
+              <div className="w-20 h-20 mx-auto mb-4 bg-muted rounded-full flex items-center justify-center">
+                <Eye className="w-10 h-10 opacity-40" />
+              </div>
               <p>No videos awaiting review</p>
               <p className="text-sm mt-1">All caught up! 🎉</p>
             </div>
           ) : (
             <div className="space-y-3">
               {awaitingReview.slice(0, 5).map(({ topic, unitName, courseName, courseId, unitId }) => (
-                <div key={topic.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                <div key={topic.id} className="flex items-center justify-between p-5 bg-gradient-to-r from-blue-50/50 to-transparent border border-border rounded-xl hover:border-blue-300 hover:shadow-sm transition-all group">
                   <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
+                    <div className="flex items-center gap-2 mb-2">
                       <StatusBadge status={topic.status} />
-                      <span className="text-sm text-gray-600">{courseName}</span>
-                      <ChevronRight className="w-4 h-4 text-gray-400" />
-                      <span className="text-sm text-gray-600">{unitName}</span>
+                      <span className="text-sm text-muted-foreground">{courseName}</span>
+                      <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                      <span className="text-sm text-muted-foreground">{unitName}</span>
                     </div>
-                    <h4 className="text-sm">{topic.name}</h4>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <h4 className="text-sm text-foreground group-hover:text-blue-600 transition-colors">{topic.name}</h4>
+                    <p className="text-xs text-muted-foreground mt-1.5">
                       Uploaded by {topic.uploadedBy} • {topic.estimatedTime} min
                     </p>
                   </div>
                   <Button 
                     size="sm"
                     onClick={() => onReviewTopic(courseId, unitId, topic.id, topic)}
+                    className="ml-4 bg-blue-600 hover:bg-blue-700 shadow-sm"
                   >
                     <Eye className="w-4 h-4 mr-2" />
                     Review
@@ -142,15 +141,21 @@ export function TeacherDashboardHome({ courses, onNavigate, onReviewTopic }: Tea
       </Card>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => onNavigate('courses')}>
-          <CardHeader>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card className="cursor-pointer border-border/50 hover:border-blue-300 hover:shadow-lg transition-all group bg-gradient-to-br from-white to-blue-50/30" onClick={() => onNavigate('courses')}>
+          <CardHeader className="pb-4">
+            <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-3 group-hover:bg-blue-600 transition-colors">
+              <Eye className="w-6 h-6 text-blue-600 group-hover:text-white transition-colors" />
+            </div>
             <CardTitle className="text-base">Manage Courses</CardTitle>
             <CardDescription>View and edit your course content</CardDescription>
           </CardHeader>
         </Card>
-        <Card className="cursor-pointer hover:shadow-md transition-shadow">
-          <CardHeader>
+        <Card className="cursor-pointer border-border/50 hover:border-purple-300 hover:shadow-lg transition-all group bg-gradient-to-br from-white to-purple-50/30">
+          <CardHeader className="pb-4">
+            <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center mb-3 group-hover:bg-purple-600 transition-colors">
+              <ChevronRight className="w-6 h-6 text-purple-600 group-hover:text-white transition-colors" />
+            </div>
             <CardTitle className="text-base">Course Analytics</CardTitle>
             <CardDescription>View detailed progress reports</CardDescription>
           </CardHeader>
