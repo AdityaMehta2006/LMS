@@ -45,11 +45,11 @@ export default function App() {
       )}
 
       {currentRole === 'editor' && (
-        <EditorDashboard courses={courses} onUpdateCourses={setCourses} />
+        <TeacherDashboard courses={courses} onUpdateCourses={setCourses} />
       )}
 
       {currentRole === 'admin' && (
-        <AdminDashboard courses={courses} onUpdateCourses={setCourses} />
+        <TeacherDashboard courses={courses} onUpdateCourses={setCourses} />
       )}
 
       {/* Toast Notifications */}
